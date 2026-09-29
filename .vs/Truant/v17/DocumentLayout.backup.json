@@ -74,8 +74,7 @@
               "RelativeToolTip": "Truant\\Simulation\\SemesterSimulator.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFcAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T14:32:16.539Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T14:32:16.539Z"
             },
             {
               "$type": "Document",
@@ -87,8 +86,7 @@
               "RelativeToolTip": "Truant\\Strategies\\StudentStrategy.cs",
               "ViewState": "AgIAAB4AAAAAAAAAAAAYwCcAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T13:59:50.473Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T13:59:50.473Z"
             },
             {
               "$type": "Document",
@@ -113,8 +111,7 @@
               "RelativeToolTip": "Truant\\Simulation\\TeacherGenerator.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAAAQwC8AAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T13:09:45.893Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T13:09:45.893Z"
             },
             {
               "$type": "Document",
@@ -126,8 +123,7 @@
               "RelativeToolTip": "Truant\\Rules\\TeacherRuleLogic.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T13:00:37.18Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T13:00:37.18Z"
             },
             {
               "$type": "Document",
@@ -139,8 +135,7 @@
               "RelativeToolTip": "Truant\\Models\\PredictionResult.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T12:55:38.349Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T12:55:38.349Z"
             },
             {
               "$type": "Document",
@@ -152,8 +147,7 @@
               "RelativeToolTip": "Truant\\Models\\Subject.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T08:07:56.585Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T08:07:56.585Z"
             },
             {
               "$type": "Document",
@@ -165,8 +159,7 @@
               "RelativeToolTip": "Truant\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T13:00:16.421Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T13:00:16.421Z"
             },
             {
               "$type": "Document",
@@ -178,8 +171,7 @@
               "RelativeToolTip": "Truant\\Models\\RuleCandidate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T12:53:47.81Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T12:53:47.81Z"
             },
             {
               "$type": "Document",
@@ -191,8 +183,7 @@
               "RelativeToolTip": "Truant\\Models\\StudentState.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T12:51:03.846Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T12:51:03.846Z"
             },
             {
               "$type": "Document",
@@ -204,8 +195,7 @@
               "RelativeToolTip": "Truant\\Models\\DayResult.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T12:48:42.976Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T12:48:42.976Z"
             },
             {
               "$type": "Document",
@@ -217,8 +207,7 @@
               "RelativeToolTip": "Truant\\Models\\TeacherRule.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T12:42:53.878Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T12:42:53.878Z"
             },
             {
               "$type": "Document",
@@ -230,8 +219,7 @@
               "RelativeToolTip": "Truant\\Models\\Teacher.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-19T08:07:37.904Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-19T08:07:37.904Z"
             }
           ]
         }

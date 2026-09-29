@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Truant")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6dcd414fb23b6cb9a295128084718b855ee8d08")]
 [assembly: System.Reflection.AssemblyProductAttribute("Truant")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Truant")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
