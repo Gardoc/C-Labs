@@ -10,7 +10,7 @@ namespace Truant.Strategies
     internal class StudentStrategy
     {
         private readonly TeacherPredictor predictor;
-        private double epsylon = 0.5;
+        private double epsylon = 0.4;
         private double expectedEpsylon = 0;
         
         public StudentStrategy()
