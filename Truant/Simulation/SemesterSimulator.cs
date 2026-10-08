@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection.Metadata.Ecma335;
 using Truant.Models;
 using Truant.Rules;
 using Truant.Strategies;
@@ -14,81 +10,84 @@ namespace Truant.Simulation
         private readonly Random random;
         private readonly List<Teacher> teachers;
         private readonly StudentStrategy strategy;
+        private readonly StudentState studentState;
+        private readonly List<DayResult> history;
+        private int currentDay;
 
-        public SemesterSimulator(Random random)
+        public SemesterSimulator(Random random, StudentStrategy strategy)
         {
             this.random = random;
+            this.strategy = strategy;
 
             teachers = TeacherGenerator.CreateTeachers(this.random);
             Console.WriteLine("Преподаватели:");
-            foreach(Teacher teacher in teachers)
+            foreach (Teacher teacher in teachers)
             {
                 Console.WriteLine($"{teacher.Subject}: Правило = {teacher.Rule}, A = {teacher.SubjectA}, B = {teacher.SubjectB}");
             }
             Console.WriteLine();
 
-            strategy = new StudentStrategy();
+            studentState = new StudentState();
+            history = new List<DayResult>();
+            currentDay = 0;
         }
 
-        public StudentState Run()
+
+        public bool RunDay()
         {
-            var student = new StudentState();
+            currentDay++;
 
-            // Вся история наблюдений студента.
-            var history = new List<DayResult>();
+            Console.WriteLine($"День {currentDay}");
 
-            for (int day = 1; day <= 100; day++)
+            var decisions = strategy.Decide(history, studentState.Pleasure);
+
+            var today = new Dictionary<Subject, bool>();
+
+
+            foreach (Teacher teacher in teachers)
             {
-                Console.WriteLine($"День {day}");
+                bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, GetYesterday(history), random);
+
+                today[teacher.Subject] = willAsk;
+
+                bool willAttend = decisions[teacher.Subject];
+
+                Console.WriteLine(
+                    $"{teacher.Subject}: " +
+                    $"студент {(willAttend ? "пришел" : "прогулял")}, " +
+                    $"преподаватель {(willAsk ? "спросил" : "не спросил")}");
 
 
-                var decisions = strategy.Decide(history, student.Pleasure);
-
-                var today = new Dictionary<Subject, bool>();
-
-                foreach (Teacher teacher in teachers)
+                if (willAttend)
                 {
-                    bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, GetYesterday(history), random);
-
-                    today[teacher.Subject] = willAsk;
-
-                    bool willAttend = decisions[teacher.Subject];
-
-                    Console.WriteLine(
-                        $"{teacher.Subject}: " +
-                        $"студент {(willAttend ? "пришел" : "прогулял")}, " +
-                        $"преподаватель {(willAsk ? "спросил" : "не спросил")}");
-
-                    // Если студент прогулял пару
-                    if (!willAttend)
-                    {
-                        student.MissedLessons++;
-                        student.Pleasure++;
-
-                        // И преподаватель его спросил
-                        if (willAsk)
-                        {
-                            student.IsExpelled = true;
-                            student.Pleasure = 0;
-
-                            Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
-
-                            return student;
-                        }
-                    }
+                    continue;
                 }
+                studentState.MissedLessons++;
+                studentState.Pleasure++;
 
-                student.Pleasure++;
-                student.DaysCompleted++;
 
-                history.Add(new DayResult(today));
+                if (willAsk)
+                {
+                    studentState.IsExpelled = true;
+                    studentState.Pleasure = 0;
 
-                Console.WriteLine($"Удовольствие: {student.Pleasure}");
+                    Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
 
-                Console.WriteLine();
+                    return false;
+                }
             }
 
-            return student;
+            studentState.Pleasure++;
+            studentState.DaysCompleted++;
+
+            history.Add(new DayResult(today));
+
+            Console.WriteLine($"Удовольствие: {studentState.Pleasure}");
+            Console.WriteLine($"Среднее удовольствие в день: {studentState.Pleasure / studentState.DaysCompleted:f2}");
+            Console.WriteLine();
+
+            return true;
+
         }
 
         private static Dictionary<Subject, bool> GetYesterday(
@@ -112,6 +111,11 @@ namespace Truant.Simulation
             }
 
             return history;
+        }
+
+        public StudentState GetStudentState()
+        {
+            return studentState;
         }
     }
 }

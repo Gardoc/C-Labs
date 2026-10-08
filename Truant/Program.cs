@@ -1,29 +1,19 @@
-﻿using Truant.Simulation;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Truant.Services;
+using Truant.Simulation;
+using Truant.Strategies;
 
-Random random = new Random();
+var builder = Host.CreateApplicationBuilder(args);
+builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
-var simulator = new SemesterSimulator(random);
+builder.Services.AddSingleton<Random>();
+builder.Services.AddSingleton<StudentStrategy>();
+builder.Services.AddSingleton<SemesterSimulator>();
 
-var result = simulator.Run();
+builder.Services.AddHostedService<SemesterHostedService>();
+builder.Services.AddHostedService<KeyboardShutdownService>();
 
-Console.WriteLine("РЕЗУЛЬТАТ");
-
-if (result.IsExpelled)
-{
-    Console.WriteLine("Студент вылетел из университета.");
-}
-else
-{
-    Console.WriteLine("Студент успешно закончил семестр.");
-}
-
-Console.WriteLine($"Пропущено пар: {result.MissedLessons}");
-Console.WriteLine($"Общее удовольствие: {result.Pleasure}");
-
-double averagePleasure =
-    result.DaysCompleted > 0
-        ? result.Pleasure / result.DaysCompleted
-        : 0;
-
-Console.WriteLine(
-    $"Среднее удовольствие в день: {averagePleasure:F2}");
+var host = builder.Build();
+await host.RunAsync();
