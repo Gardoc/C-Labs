@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Truant.Models;
 
-namespace Truant.Models
+internal class DayResult
 {
-    internal class DayResult
+    public Dictionary<Subject, bool> Asked { get; }
+
+    public DayResult(Dictionary<Subject, bool> asked)
     {
-        public Dictionary<Subject, bool> Asked { get; }
-        public DayResult(Dictionary<Subject, bool> asked)
-        {
-            Asked = asked;       
-        }
-
-
+        Asked = asked;       
     }
 }
