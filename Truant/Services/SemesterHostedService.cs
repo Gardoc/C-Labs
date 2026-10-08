@@ -30,7 +30,7 @@ namespace Truant.Services
                     break;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1), stoppedToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppedToken);
             }
 
         }

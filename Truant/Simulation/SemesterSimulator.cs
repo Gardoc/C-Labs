@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection.Metadata.Ecma335;
 using Truant.Models;
 using Truant.Rules;
 using Truant.Strategies;
@@ -25,7 +21,7 @@ namespace Truant.Simulation
 
             teachers = TeacherGenerator.CreateTeachers(this.random);
             Console.WriteLine("Преподаватели:");
-            foreach(Teacher teacher in teachers)
+            foreach (Teacher teacher in teachers)
             {
                 Console.WriteLine($"{teacher.Subject}: Правило = {teacher.Rule}, A = {teacher.SubjectA}, B = {teacher.SubjectB}");
             }
@@ -61,22 +57,23 @@ namespace Truant.Simulation
                     $"студент {(willAttend ? "пришел" : "прогулял")}, " +
                     $"преподаватель {(willAsk ? "спросил" : "не спросил")}");
 
-                // Если студент прогулял пару
-                if (!willAttend)
+
+                if (willAttend)
                 {
-                    studentState.MissedLessons++;
-                    studentState.Pleasure++;
+                    continue;
+                }
+                studentState.MissedLessons++;
+                studentState.Pleasure++;
 
-                    // И преподаватель его спросил
-                    if (willAsk)
-                    {
-                        studentState.IsExpelled = true;
-                        studentState.Pleasure = 0;
 
-                        Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
+                if (willAsk)
+                {
+                    studentState.IsExpelled = true;
+                    studentState.Pleasure = 0;
 
-                        return false;
-                    }
+                    Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
+
+                    return false;
                 }
             }
 
@@ -86,7 +83,7 @@ namespace Truant.Simulation
             history.Add(new DayResult(today));
 
             Console.WriteLine($"Удовольствие: {studentState.Pleasure}");
-            Console.WriteLine($"Среднее удовольствие в день: {studentState.Pleasure/studentState.DaysCompleted:f2}");
+            Console.WriteLine($"Среднее удовольствие в день: {studentState.Pleasure / studentState.DaysCompleted:f2}");
             Console.WriteLine();
 
             return true;

@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Truant.Models;
 
-namespace Truant.Models
+internal class PredictionResult
 {
-    internal class PredictionResult
-    {
-        public double AskProbability { get;}
-        public double Confidence { get;}
+    public double AskProbability { get;}
+    public double Confidence { get;}
 
-        public PredictionResult(double askProbability, double confidence)
-        {
-            AskProbability = askProbability;
-            Confidence = confidence;
-        }
+    public PredictionResult(double askProbability, double confidence)
+    {
+        AskProbability = askProbability;
+        Confidence = confidence;
     }
 }
