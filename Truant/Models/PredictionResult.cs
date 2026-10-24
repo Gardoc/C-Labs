@@ -1,6 +1,6 @@
 ﻿namespace Truant.Models;
 
-internal class PredictionResult
+public class PredictionResult
 {
     public double AskProbability { get;}
     public double Confidence { get;}

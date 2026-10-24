@@ -1,6 +1,6 @@
 ﻿namespace Truant.Models;
 
-internal class RuleCandidate
+public class RuleCandidate
 {
     public TeacherRule Rule { get; }
     public Subject? SubjectA { get; }

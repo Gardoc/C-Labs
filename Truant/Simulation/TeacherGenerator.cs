@@ -2,7 +2,7 @@
 
 namespace Truant.Simulation;
 
-internal static class TeacherGenerator
+public static class TeacherGenerator
 {
     public static List<Teacher> CreateTeachers(Random random)
     {
