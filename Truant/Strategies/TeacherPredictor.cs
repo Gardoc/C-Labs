@@ -2,7 +2,7 @@
 
 namespace Truant.Strategies;
 
-internal class TeacherPredictor
+public class TeacherPredictor : ITeacherPredictor
 {
     public PredictionResult Predict(Subject subject, List<DayResult> history)
     {

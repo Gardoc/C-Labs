@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Truant.Models;
 
-internal class Teacher
+public class Teacher
 {
     public Subject Subject {get;}       
     public TeacherRule Rule {get;}
