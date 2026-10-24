@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Truant.Models;
 
-namespace Truant.Models
+internal enum TeacherRule
 {
-    internal enum TeacherRule
-    {
-        Random, 
-        IfAskedYesterday,
-        IfAskedHistory
-    }
+    Random, 
+    IfAskedYesterday,
+    IfAskedHistory
 }

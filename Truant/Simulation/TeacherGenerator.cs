@@ -1,60 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Truant.Models;
+﻿using Truant.Models;
 
-namespace Truant.Simulation
+namespace Truant.Simulation;
+
+internal static class TeacherGenerator
 {
-    internal static class TeacherGenerator
+    public static List<Teacher> CreateTeachers(Random random)
     {
-        public static List<Teacher> CreateTeachers(Random random)
+        var subjects = Enum.GetValues<Subject>();
+
+        var teachers = new List<Teacher>();
+
+        foreach (var subject in subjects)
         {
-            var subjects = Enum.GetValues<Subject>();
+            TeacherRule rule = (TeacherRule)random.Next(0, 3);
 
-            var teachers = new List<Teacher>();
-
-            foreach (var subject in subjects)
+            switch (rule)
             {
-                TeacherRule rule = (TeacherRule)random.Next(0, 3);
+                case TeacherRule.Random:
+                    teachers.Add(new Teacher(subject, rule));
 
-                switch (rule)
-                {
-                    case TeacherRule.Random:
-                        teachers.Add(new Teacher(subject, rule));
+                    break;
+
+                case TeacherRule.IfAskedYesterday:
+                    {
+                        Subject a = subjects[random.Next(subjects.Length)];
+
+                        teachers.Add(new Teacher(subject, rule, a));
 
                         break;
+                    }
 
-                    case TeacherRule.IfAskedYesterday:
+                case TeacherRule.IfAskedHistory:
+                    {
+                        Subject a = subjects[random.Next(subjects.Length)];
+
+                        Subject b;
+
+                        do
                         {
-                            Subject a = subjects[random.Next(subjects.Length)];
-
-                            teachers.Add(new Teacher(subject, rule, a));
-
-                            break;
+                            b = subjects[random.Next(subjects.Length)];
                         }
+                        while (b == a);
 
-                    case TeacherRule.IfAskedHistory:
-                        {
-                            Subject a = subjects[random.Next(subjects.Length)];
+                        teachers.Add(new Teacher(subject, rule, a, b));
 
-                            Subject b;
-
-                            do
-                            {
-                                b = subjects[random.Next(subjects.Length)];
-                            }
-                            while (b == a);
-
-                            teachers.Add(new Teacher(subject, rule, a, b));
-
-                            break;
-                        }
-                }
+                        break;
+                    }
             }
-
-            return teachers;
         }
+
+        return teachers;
     }
 }
