@@ -2,119 +2,119 @@
 using Truant.Rules;
 using Truant.Strategies;
 
-namespace Truant.Simulation;
-
-internal class SemesterSimulator
+namespace Truant.Simulation
 {
-    private readonly Random random;
-    private readonly List<Teacher> teachers;
-    private readonly StudentStrategy strategy;
-
-    public SemesterSimulator(Random random)
+    internal class SemesterSimulator
     {
-        this.random = random;
+        private readonly Random random;
+        private readonly List<Teacher> teachers;
+        private readonly StudentStrategy strategy;
+        private readonly StudentState studentState;
+        private readonly List<DayResult> history;
+        private int currentDay;
 
-        teachers = TeacherGenerator.CreateTeachers(this.random);
-        Console.WriteLine("Преподаватели:");
-        foreach (Teacher teacher in teachers)
+        public SemesterSimulator(Random random, StudentStrategy strategy)
         {
-            Console.WriteLine($"{teacher.Subject}: Правило = {teacher.Rule}, A = {teacher.SubjectA}, B = {teacher.SubjectB}");
-        }
-        Console.WriteLine();
+            this.random = random;
+            this.strategy = strategy;
 
-        strategy = new StudentStrategy();
-    }
-
-    public bool RunDay(StudentState student, List<DayResult> history)
-    {
-        var decisions = strategy.Decide(history, student.Pleasure);
-
-        var today = new Dictionary<Subject, bool>();
-
-        var yesterday = GetYesterday(history);
-
-        foreach (Teacher teacher in teachers)
-        {
-            bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, yesterday, random);
-
-            today[teacher.Subject] = willAsk;
-
-            bool willAttend = decisions[teacher.Subject];
-
-            Console.WriteLine(
-                $"{teacher.Subject}: " +
-                $"студент {(willAttend ? "пришел" : "прогулял")}, " +
-                $"преподаватель {(willAsk ? "спросил" : "не спросил")}");
-            
-            if (willAttend)
+            teachers = TeacherGenerator.CreateTeachers(this.random);
+            Console.WriteLine("Преподаватели:");
+            foreach (Teacher teacher in teachers)
             {
-                continue;
+                Console.WriteLine($"{teacher.Subject}: Правило = {teacher.Rule}, A = {teacher.SubjectA}, B = {teacher.SubjectB}");
             }
-            student.MissedLessons++;
-            student.Pleasure++;
+            Console.WriteLine();
 
-            if (willAsk)
-            {
-                student.IsExpelled = true;
-                student.Pleasure = 0;
-
-                Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
-
-                return false;
-            }            
+            studentState = new StudentState();
+            history = new List<DayResult>();
+            currentDay = 0;
         }
 
-        student.Pleasure++;
-        student.DaysCompleted++;
 
-        history.Add(new DayResult(today));
-
-        Console.WriteLine($"Удовольствие: {student.Pleasure}");
-
-        Console.WriteLine();
-
-        return true;
-    }    
-
-    public StudentState Run()
-    {
-        var student = new StudentState();
-
-        // Вся история наблюдений студента.
-        var history = new List<DayResult>();
-
-        for (int day = 1; day <= 100; day++)
+        public bool RunDay()
         {
-            Console.WriteLine($"День {day}");
-            bool isRunning = RunDay(student, history);
-            if (!isRunning)
+            currentDay++;
+
+            Console.WriteLine($"День {currentDay}");
+
+            var decisions = strategy.Decide(history, studentState.Pleasure);
+
+            var today = new Dictionary<Subject, bool>();
+
+
+            foreach (Teacher teacher in teachers)
             {
-                return student;
+                bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, GetYesterday(history), random);
+
+                today[teacher.Subject] = willAsk;
+
+                bool willAttend = decisions[teacher.Subject];
+
+                Console.WriteLine(
+                    $"{teacher.Subject}: " +
+                    $"студент {(willAttend ? "пришел" : "прогулял")}, " +
+                    $"преподаватель {(willAsk ? "спросил" : "не спросил")}");
+
+
+                if (willAttend)
+                {
+                    continue;
+                }
+                studentState.MissedLessons++;
+                studentState.Pleasure++;
+
+
+                if (willAsk)
+                {
+                    studentState.IsExpelled = true;
+                    studentState.Pleasure = 0;
+
+                    Console.WriteLine("СТУДЕНТ ВЫЛЕТЕЛ!");
+
+                    return false;
+                }
             }
-        }
-        return student;
-    }
 
-    private static Dictionary<Subject, bool> GetYesterday(
-        List<DayResult> history)
-    {
-        if (history.Count == 0)
+            studentState.Pleasure++;
+            studentState.DaysCompleted++;
+
+            history.Add(new DayResult(today));
+
+            Console.WriteLine($"Удовольствие: {studentState.Pleasure}");
+            Console.WriteLine($"Среднее удовольствие в день: {studentState.Pleasure / studentState.DaysCompleted:f2}");
+            Console.WriteLine();
+
+            return true;
+
+        }
+
+        private static Dictionary<Subject, bool> GetYesterday(
+            List<DayResult> history)
         {
-            return CreateEmptyHistory();
+            if (history.Count == 0)
+            {
+                return CreateEmptyHistory();
+            }
+
+            return history[^1].Asked;
         }
 
-        return history[^1].Asked;
-    }
-
-    private static Dictionary<Subject, bool> CreateEmptyHistory()
-    {
-        var history = new Dictionary<Subject, bool>();
-
-        foreach (Subject subject in Enum.GetValues<Subject>())
+        private static Dictionary<Subject, bool> CreateEmptyHistory()
         {
-            history[subject] = false;
+            var history = new Dictionary<Subject, bool>();
+
+            foreach (Subject subject in Enum.GetValues<Subject>())
+            {
+                history[subject] = false;
+            }
+
+            return history;
         }
 
-        return history;
+        public StudentState GetStudentState()
+        {
+            return studentState;
+        }
     }
 }
