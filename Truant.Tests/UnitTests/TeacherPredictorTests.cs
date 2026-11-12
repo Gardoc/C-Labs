@@ -1,23 +1,23 @@
 ﻿using Truant.Models;
 using Truant.Strategies;
 
-namespace Truant.Tests;
+namespace Truant.Tests.UnitTests;
 
 public class TeacherPredictorTests
 {
     [Fact]
     public void Predict_WhenHistoryIsEmpty_ReturnsInitialPrediction()
     {
-        //Arrange
-        TeacherPredictor predictor = new TeacherPredictor();
-        List<DayResult> history = new List<DayResult>();
+        // Arrange
+        var predictor = new TeacherPredictor();
+        var history = new List<DayResult>();
 
-        //Act
+        // Act
         PredictionResult result = predictor.Predict(Subject.Calculus, history);
 
-        //Assert
+        // Assert
         Assert.Equal(1.0 / 6.0, result.AskProbability, 5);
-        Assert.Equal(1.0 / 3.0, result.Confidence, 5);
+        Assert.Equal(0.0, result.Confidence, 5);
     }
 
     [Fact]

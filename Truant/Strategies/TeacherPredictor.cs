@@ -11,8 +11,6 @@ public class TeacherPredictor : ITeacherPredictor
         double totalWeight = 0;
         double askWeight = 0;
 
-        var weights = new List<double>();
-
         foreach (RuleCandidate candidate in candidates)
         {
             double weight = CalculateWeight(candidate, subject, history);
@@ -23,7 +21,6 @@ public class TeacherPredictor : ITeacherPredictor
             }
 
             totalWeight += weight;
-            weights.Add(weight);
 
             if (candidate.Rule == TeacherRule.Random)
             {
@@ -42,21 +39,18 @@ public class TeacherPredictor : ITeacherPredictor
 
         double askProbability = askWeight / totalWeight;
 
-        double confidence = CalculateConfidence(weights, totalWeight);
+        double confidence = CalculateConfidence(askProbability, history.Count);
 
         return new PredictionResult(askProbability, confidence);
     }
 
-    private double CalculateConfidence(List<double> weights, double totalWeight)
+    private double CalculateConfidence(double askProbability, int observations)
     {
-        if (weights.Count == 0)
-        {
-            return 0;
-        }
+        double agreement = Math.Max(askProbability, 1 - askProbability);
 
-        double maxWeight = weights.Max();
+        double reliability = (double)observations / (observations + 10);
 
-        return maxWeight / totalWeight;
+        return agreement * reliability;
     }
 
     private List<RuleCandidate> CreateCandidates()
@@ -144,8 +138,10 @@ public class TeacherPredictor : ITeacherPredictor
         {
             case TeacherRule.IfAskedYesterday:
                 return yesterday[candidate.SubjectA!.Value];
+
             case TeacherRule.IfAskedHistory:
                 return yesterday[candidate.SubjectA!.Value] != yesterday[candidate.SubjectB!.Value];
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -187,7 +183,6 @@ public class TeacherPredictor : ITeacherPredictor
 
             case TeacherRule.IfAskedHistory:
                 bool askedA = lastDay[candidate.SubjectA!.Value];
-
                 bool askedB = lastDay[candidate.SubjectB!.Value];
 
                 return askedA != askedB;
