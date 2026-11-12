@@ -223,7 +223,7 @@ public class SemesterRepositoryTests
     public async Task GetLatestUnfinishedSemesterAsync_WhenNoSemestersExist_ShouldReturnNull()
     {
         // Arrange
-        await using var connection = new Npgsql.NpgsqlConnection("Host=localhost;Port=5432;Database=truant_db_test;Username=postgres;Password=Doctor25");
+        await using var connection = new Npgsql.NpgsqlConnection(fixture.ConnectionString);
 
         await connection.OpenAsync();
 
