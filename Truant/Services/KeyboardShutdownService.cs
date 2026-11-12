@@ -8,7 +8,7 @@ using Truant.Simulation;
 
 namespace Truant.Services
 {
-    internal class KeyboardShutdownService: BackgroundService
+    public class KeyboardShutdownService: BackgroundService
     {
         private readonly IHostApplicationLifetime lifetime;
         public KeyboardShutdownService(IHostApplicationLifetime lifetime)

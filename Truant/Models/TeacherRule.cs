@@ -1,6 +1,6 @@
 ﻿namespace Truant.Models;
 
-internal enum TeacherRule
+public enum TeacherRule
 {
     Random, 
     IfAskedYesterday,

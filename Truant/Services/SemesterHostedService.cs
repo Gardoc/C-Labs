@@ -8,7 +8,7 @@ using Truant.Simulation;
 
 namespace Truant.Services
 {
-    internal class SemesterHostedService: BackgroundService
+    public class SemesterHostedService: BackgroundService
     {
         private readonly SemesterSimulator semesterSimulator;
         private readonly IHostApplicationLifetime lifetime;
@@ -30,7 +30,7 @@ namespace Truant.Services
                     break;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppedToken);
+                await Task.Delay(TimeSpan.FromSeconds(0.5), stoppedToken);
             }
 
         }

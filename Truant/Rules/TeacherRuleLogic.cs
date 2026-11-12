@@ -2,13 +2,13 @@
 
 namespace Truant.Rules;
 
-internal static class TeacherRuleLogic
+public static class TeacherRuleLogic
 {
-    public static bool ShouldAsk(Teacher teacher, Dictionary<Subject, bool> yesterday, Random rnd)
+    public static bool ShouldAsk(Teacher teacher, Dictionary<Subject, bool> yesterday, Func<double> nextRandom)
     {
         switch (teacher.Rule){
             case TeacherRule.Random:
-                return rnd.NextDouble() < 0.5;
+                return nextRandom() < 0.5;
             case TeacherRule.IfAskedYesterday:
                 return yesterday[teacher.SubjectA!.Value];
             case TeacherRule.IfAskedHistory:

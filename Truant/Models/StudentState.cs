@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Truant.Models;
 
-internal class StudentState
+public class StudentState
 {
     public bool IsExpelled {  get; set; }   
     public double Pleasure {  get; set; }  

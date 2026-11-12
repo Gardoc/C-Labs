@@ -1,6 +1,6 @@
 ﻿namespace Truant.Models;
 
-internal class DayResult
+public class DayResult
 {
     public Dictionary<Subject, bool> Asked { get; }
 

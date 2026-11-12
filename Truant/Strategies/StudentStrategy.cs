@@ -2,30 +2,35 @@
 
 namespace Truant.Strategies;
 
-internal class StudentStrategy
+public class StudentStrategy
 {
-    private readonly TeacherPredictor predictor;
+    private readonly ITeacherPredictor predictor;
     private double epsylon = 0.45;
-    private double expectedEpsylon = 0;
+    private double expectedEpsylon = 0.1;
 
-    public StudentStrategy()
+    public StudentStrategy() : this(new TeacherPredictor())
     {
-        predictor = new TeacherPredictor();
+        
     }
 
-    public Dictionary<Subject, bool> Decide(List<DayResult> history, double pleasure)
+    public StudentStrategy(ITeacherPredictor predictor)
+    {
+        this.predictor = predictor;
+    }
+
+    public Dictionary<Subject, bool> Decide(List<DayResult> history)
     {
         var decisions = new Dictionary<Subject, bool>();
         foreach (Subject subject in Enum.GetValues<Subject>())
         {
-            decisions[subject] = ShouldAttend(subject, history, pleasure);
+            decisions[subject] = ShouldAttend(subject, history);
         }
 
         return decisions;
 
     }
 
-    private bool ShouldAttend(Subject subject, List<DayResult> history, double pleasure)
+    private bool ShouldAttend(Subject subject, List<DayResult> history)
     {
         if (history.Count == 0)
         {
@@ -40,14 +45,7 @@ internal class StudentStrategy
             return true;
         }
 
-        double expectedChange = (1 - askprobability) - askprobability * pleasure; // (вероятность, что не спросят) - награда за прогул
-
-        if (expectedChange > expectedEpsylon)
-        {
-            return false;
-        }
-
-        return true;
+        return askprobability > expectedEpsylon;
 
     }
 }

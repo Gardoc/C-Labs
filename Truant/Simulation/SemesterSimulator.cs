@@ -4,7 +4,7 @@ using Truant.Strategies;
 
 namespace Truant.Simulation
 {
-    internal class SemesterSimulator
+    public class SemesterSimulator
     {
         private readonly Random random;
         private readonly List<Teacher> teachers;
@@ -38,14 +38,14 @@ namespace Truant.Simulation
 
             Console.WriteLine($"День {currentDay}");
 
-            var decisions = strategy.Decide(history, studentState.Pleasure);
+            var decisions = strategy.Decide(history);
 
             var today = new Dictionary<Subject, bool>();
 
 
             foreach (Teacher teacher in teachers)
             {
-                bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, GetYesterday(history), random);
+                bool willAsk = TeacherRuleLogic.ShouldAsk(teacher, GetYesterday(history), () => random.NextDouble());
 
                 today[teacher.Subject] = willAsk;
 
