@@ -4,7 +4,7 @@ namespace Truant.Simulation;
 
 public static class TeacherGenerator
 {
-    public static List<Teacher> CreateTeachers(Random random)
+    public static List<Teacher> CreateTeachers(RandomGenerator random)
     {
         var subjects = Enum.GetValues<Subject>();
 
@@ -23,7 +23,7 @@ public static class TeacherGenerator
 
                 case TeacherRule.IfAskedYesterday:
                     {
-                        Subject a = subjects[random.Next(subjects.Length)];
+                        Subject a = subjects[random.Next(0, subjects.Length)];
 
                         teachers.Add(new Teacher(subject, rule, a));
 
@@ -32,13 +32,13 @@ public static class TeacherGenerator
 
                 case TeacherRule.IfAskedHistory:
                     {
-                        Subject a = subjects[random.Next(subjects.Length)];
+                        Subject a = subjects[random.Next(0, subjects.Length)];
 
                         Subject b;
 
                         do
                         {
-                            b = subjects[random.Next(subjects.Length)];
+                            b = subjects[random.Next(0, subjects.Length)];
                         }
                         while (b == a);
 

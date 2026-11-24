@@ -1,7 +1,7 @@
 ﻿using Truant.Models;
 using Truant.Rules;
 
-namespace Truant.Tests;
+namespace Truant.Tests.UnitTests;
 
 public class TeacherRuleLogicTests
 {

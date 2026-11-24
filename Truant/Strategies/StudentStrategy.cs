@@ -42,8 +42,19 @@ public class StudentStrategy
         double confidence = prediction.Confidence;
         if (confidence < epsylon)
         {
+            Console.WriteLine(
+            $"    {subject}: " +
+            $"P(спросит) = {prediction.AskProbability:P1}, " +
+            $"уверенность = {confidence:P1} " +
+            $"-> ПРИЙТИ");
             return true;
         }
+
+        Console.WriteLine(
+            $"    {subject}: " +
+            $"P(спросит) = {prediction.AskProbability:P1}, " +
+            $"уверенность = {confidence:P1} " +
+            $"-> ПРИЙТИ");
 
         return askprobability > expectedEpsylon;
 

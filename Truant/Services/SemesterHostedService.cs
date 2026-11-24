@@ -1,38 +1,55 @@
 ﻿using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Truant.Models;
 using Truant.Simulation;
 
-namespace Truant.Services
-{
-    public class SemesterHostedService: BackgroundService
-    {
-        private readonly SemesterSimulator semesterSimulator;
-        private readonly IHostApplicationLifetime lifetime;
+namespace Truant.Services;
 
-        public SemesterHostedService(SemesterSimulator semesterSimulator, IHostApplicationLifetime lifetime)
+public class SemesterHostedService: BackgroundService
+{
+    private readonly SemesterSimulator semesterSimulator;
+    private readonly IHostApplicationLifetime lifetime;
+    private readonly SimulationStartupOptions options;
+
+    public SemesterHostedService(SemesterSimulator semesterSimulator, IHostApplicationLifetime lifetime, SimulationStartupOptions options)
+    {
+        this.semesterSimulator = semesterSimulator;
+        this.lifetime = lifetime;
+        this.options = options;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        lifetime.ApplicationStarted.Register(() => started.TrySetResult(true));
+
+        await started.Task.WaitAsync(stoppingToken);
+
+        Console.WriteLine("=================================");
+        Console.WriteLine("Generic Host запущен");
+        Console.WriteLine("=================================");
+        Console.WriteLine();
+
+        if (options.ResumeExisting)
         {
-            this.semesterSimulator = semesterSimulator;
-            this.lifetime = lifetime;
+            await semesterSimulator.ResumeAsync(options.SemesterId!.Value, stoppingToken);
+        }
+        else
+        {
+            await semesterSimulator.InitializeAsync(stoppingToken);
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppedToken)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (!stoppedToken.IsCancellationRequested) {
+            bool isRunning = await semesterSimulator.RunDayAsync(stoppingToken);
 
-                bool isRunning = semesterSimulator.RunDay();
-
-                if (!isRunning) {
-                    lifetime.StopApplication();
-                    break;
-                }
-
-                await Task.Delay(TimeSpan.FromSeconds(0.5), stoppedToken);
+            if (!isRunning)
+            {
+                lifetime.StopApplication();
+                break;
             }
 
+            await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
         }
     }
 }
