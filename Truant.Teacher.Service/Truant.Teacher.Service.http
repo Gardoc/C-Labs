@@ -1,0 +1,6 @@
+@Truant.Teacher.Service_HostAddress = http://localhost:5219
+
+GET {{Truant.Teacher.Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

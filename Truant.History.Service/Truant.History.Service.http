@@ -1,0 +1,6 @@
+@Truant.History.Service_HostAddress = http://localhost:5038
+
+GET {{Truant.History.Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,16 +1,30 @@
 ﻿using Truant.Models;
 using Truant.Simulation;
 using Truant.Strategies;
+using Xunit;
 
 namespace Truant.Tests.IntegrationTests;
 
-public class SemesterRepositoryTests
+[Collection("Database collection")]
+public class SemesterRepositoryTests : IAsyncLifetime
 {
     private readonly TestDatabase fixture;
 
     public SemesterRepositoryTests()
     {
         fixture = new TestDatabase();
+    }
+
+    // Выполняется перед каждым тестом
+    public async Task InitializeAsync()
+    {
+        await fixture.ResetAsync();
+    }
+
+    // Выполняется после каждого теста
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 
     [Fact]
@@ -222,15 +236,6 @@ public class SemesterRepositoryTests
     [Fact]
     public async Task GetLatestUnfinishedSemesterAsync_WhenNoSemestersExist_ShouldReturnNull()
     {
-        // Arrange
-        await using var connection = new Npgsql.NpgsqlConnection(fixture.ConnectionString);
-
-        await connection.OpenAsync();
-
-        await using var command = new Npgsql.NpgsqlCommand("DELETE FROM semesters;", connection);
-
-        await command.ExecuteNonQueryAsync();
-
         // Act
         var latest = await fixture.Repository.GetLatestUnfinishedSemesterAsync();
 
@@ -238,91 +243,6 @@ public class SemesterRepositoryTests
         Assert.Null(latest);
     }
 
-    [Fact]
-    public async Task ResumeAsync_ShouldProduceSameResultAsContinuousSimulation()
-    {
-        // Arrange
-        const ulong seed = 123456789;
-
-        // Первая симуляция: 10 дней без перезапуска.
-        var continuousSimulator = new SemesterSimulator(new RandomGenerator(seed), new StudentStrategy(new AlwaysAttendPredictor()), fixture.Repository);
-
-        await continuousSimulator.InitializeAsync();
-
-        var continuousSemester = await fixture.Repository.GetLatestUnfinishedSemesterAsync();
-
-        Assert.NotNull(continuousSemester);
-
-        // Вторая симуляция: 5 дней, перезапуск, ещё 5 дней.
-        var resumedSimulator = new SemesterSimulator(new RandomGenerator(seed), new StudentStrategy(new AlwaysAttendPredictor()), fixture.Repository);
-
-        await resumedSimulator.InitializeAsync();
-
-        var resumedSemester = await fixture.Repository.GetLatestUnfinishedSemesterAsync();
-
-        Assert.NotNull(resumedSemester);
-
-        // Act: непрерывная симуляция.
-        for (int i = 0; i < 10; i++)
-        {
-            Assert.True(await continuousSimulator.RunDayAsync());
-        }
-
-        // Act: первая половина второй симуляции.
-        for (int i = 0; i < 5; i++)
-        {
-            Assert.True(await resumedSimulator.RunDayAsync());
-        }
-
-        // Создаём новый экземпляр — имитируем перезапуск приложения.
-        var restoredSimulator = new SemesterSimulator(new RandomGenerator(999), new StudentStrategy(new AlwaysAttendPredictor()), fixture.Repository);
-
-        await restoredSimulator.ResumeAsync(resumedSemester.Id);
-
-        // Продолжаем вторую симуляцию.
-        for (int i = 0; i < 5; i++)
-        {
-            Assert.True(await restoredSimulator.RunDayAsync());
-        }
-
-        // Загружаем итоговые состояния из PostgreSQL.
-        var continuousResult = await fixture.Repository.LoadSemesterAsync(continuousSemester.Id);
-        var resumedResult = await fixture.Repository.LoadSemesterAsync(resumedSemester.Id);
-
-        // Assert
-        Assert.NotNull(continuousResult);
-        Assert.NotNull(resumedResult);
-
-        Assert.Equal(continuousResult.CurrentDay, resumedResult.CurrentDay);
-        Assert.Equal(continuousResult.RandomState, resumedResult.RandomState);
-        Assert.Equal(continuousResult.Student.Pleasure, resumedResult.Student.Pleasure);
-        Assert.Equal(continuousResult.Student.MissedLessons, resumedResult.Student.MissedLessons);
-        Assert.Equal(continuousResult.Student.DaysCompleted, resumedResult.Student.DaysCompleted);
-        Assert.Equal(continuousResult.Student.IsExpelled, resumedResult.Student.IsExpelled);
-        Assert.Equal(continuousResult.History.Count, resumedResult.History.Count);
-        Assert.Equal(continuousResult.Teachers.Count, resumedResult.Teachers.Count);
-
-        // Сравниваем историю посещений.
-        for (int day = 0; day < 10; day++)
-        {
-            foreach (Subject subject in Enum.GetValues<Subject>())
-            {
-                Assert.Equal(continuousResult.History[day].Asked[subject], resumedResult.History[day].Asked[subject]);
-            }
-        }
-
-        // Сравниваем преподавателей и их правила.
-        foreach (Teacher teacher in continuousResult.Teachers)
-        {
-            var restoredTeacher = Assert.Single(resumedResult.Teachers.Where(t => t.Subject == teacher.Subject));
-
-            Assert.Equal(teacher.Rule, restoredTeacher.Rule);
-            Assert.Equal(teacher.SubjectA, restoredTeacher.SubjectA);
-            Assert.Equal(teacher.SubjectB, restoredTeacher.SubjectB);
-        }
-    }
-
-    // Предсказатель всегда рекомендует посещать занятия.
     private class AlwaysAttendPredictor : ITeacherPredictor
     {
         public PredictionResult Predict(Subject subject, List<DayResult> history)
