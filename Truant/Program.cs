@@ -7,6 +7,7 @@ using Truant.Persistance;
 using Truant.Services;
 using Truant.Simulation;
 using Truant.Strategies;
+using Truant.Clients;
 
 var startupOptions = new SimulationStartupOptions();
 
@@ -14,41 +15,48 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
-// Регистрируем зависимости
 builder.Services.AddSingleton<RandomGenerator>();
 builder.Services.AddSingleton<StudentStrategy>();
 builder.Services.AddSingleton<SemesterSimulator>();
 builder.Services.AddSingleton<SemesterRepository>();
+string teacherBaseUrl = builder.Configuration["TeacherService:BaseUrl"]
+?? throw new InvalidOperationException("Адрес Teacher Service не найден.");
+
+builder.Services.AddHttpClient<TeacherServiceClient>(client =>
+{
+    client.BaseAddress = new Uri(teacherBaseUrl.TrimEnd('/') + "/");
+});
+string historyBaseUrl = builder.Configuration["HistoryService:BaseUrl"]
+    ?? throw new InvalidOperationException("Адрес History Service не найден.");
+
+builder.Services.AddHttpClient<HistoryServiceClient>(client =>
+{
+    client.BaseAddress = new Uri(historyBaseUrl.TrimEnd('/') + "/");
+});
 builder.Services.AddSingleton(startupOptions);
 
 builder.Services.AddSingleton(provider =>
 {
-    string connectionString =
-        builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException(
-            "Строка подключения не найдена.");
+    string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Строка подключения не найдена.");
 
     return new DatabaseConnectionFactory(connectionString);
 });
 
-// Регистрируем фоновые сервисы
 builder.Services.AddHostedService<SemesterHostedService>();
 builder.Services.AddHostedService<KeyboardShutdownService>();
 
 var host = builder.Build();
 
-// Получаем последний незавершённый семестр
 SemesterSnapshot? latestSemester;
 
 using (var scope = host.Services.CreateScope())
 {
-    var repository = scope.ServiceProvider
-        .GetRequiredService<SemesterRepository>();
+    var repository = scope.ServiceProvider.GetRequiredService<SemesterRepository>();
 
     latestSemester = await repository.GetLatestUnfinishedSemesterAsync();
 }
 
-// Меню запуска
 Console.WriteLine("=================================");
 Console.WriteLine("       СИМУЛЯТОР СЕМЕСТРА");
 Console.WriteLine("=================================");
@@ -93,5 +101,4 @@ while (true)
 
 Console.WriteLine();
 
-// Запускаем приложение
 await host.RunAsync();

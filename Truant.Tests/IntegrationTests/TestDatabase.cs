@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Npgsql;
+using Microsoft.Extensions.Configuration;
 using Truant.Persistance;
 
 namespace Truant.Tests.IntegrationTests;
@@ -20,5 +21,16 @@ public class TestDatabase
 
         var connectionFactory = new DatabaseConnectionFactory(ConnectionString);
         Repository = new SemesterRepository(connectionFactory);
+    }
+
+    public async Task ResetAsync()
+    {
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
+
+        const string sql = "TRUNCATE TABLE semesters RESTART IDENTITY CASCADE;";
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        await command.ExecuteNonQueryAsync();
     }
 }
